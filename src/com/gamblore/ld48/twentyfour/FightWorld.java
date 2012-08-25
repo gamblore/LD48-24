@@ -7,6 +7,7 @@ import net.androidpunk.Entity;
 import net.androidpunk.FP;
 import net.androidpunk.World;
 import net.androidpunk.graphics.Text;
+import net.androidpunk.graphics.atlas.AtlasText;
 import net.androidpunk.graphics.atlas.GraphicList;
 import net.androidpunk.graphics.atlas.Image;
 import net.androidpunk.tweens.misc.ColorTween;
@@ -27,10 +28,10 @@ public class FightWorld extends World {
 	
 	private int mStep;
 	
-	private Text mPlayerText, mEnemyText;
-	private Text mPlayerDamageText, mEnemyDamageText;
+	private AtlasText mPlayerText, mEnemyText;
+	private AtlasText mPlayerDamageText, mEnemyDamageText;
 	
-	private Text mPlayerScore, mEnemyScore;
+	private AtlasText mPlayerScore, mEnemyScore;
 	private int mPlayerScoreValue, mEnemyScoreValue;
 	
 	private ColorTween mPlayerTextTween, mEnemyTextTween;
@@ -67,31 +68,31 @@ public class FightWorld extends World {
 		}
 		
 		
-		mPlayerText = new Text("Player", 18, MainEngine.mTypeface);
+		mPlayerText = new AtlasText("Player", 18, MainEngine.mTypeface);
 		mPlayerText.x = FP.screen.getWidth()/2;
 		mPlayerText.y = FP.screen.getHeight()/2 - FP.dip(64);
 		
-		mPlayerDamageText = new Text("", 18, MainEngine.mTypeface);
+		mPlayerDamageText = new AtlasText("", 18, MainEngine.mTypeface);
 		mPlayerDamageText.x = FP.screen.getWidth()/2 + FP.dip(40);
 		mPlayerDamageText.y = FP.screen.getHeight()/2 - FP.dip(30);
 		mPlayerDamageText.setColor(0xffff3333);
 		mPlayerDamageText.visible = false;
 		
-		mEnemyText = new Text("Enemy", 18, MainEngine.mTypeface);
+		mEnemyText = new AtlasText("Enemy", 18, MainEngine.mTypeface);
 		mEnemyText.x = FP.screen.getWidth()/2;
 		mEnemyText.y = FP.screen.getHeight()/2 + FP.dip(32);
 		
-		mEnemyDamageText = new Text("", 18, MainEngine.mTypeface);
+		mEnemyDamageText = new AtlasText("", 18, MainEngine.mTypeface);
 		mEnemyDamageText.x = FP.screen.getWidth()/2 + FP.dip(40);
 		mEnemyDamageText.y = FP.screen.getHeight()/2 + FP.dip(10);
 		mEnemyDamageText.setColor(0xffff3333);
 		mEnemyDamageText.visible = false;
 		
-		mPlayerScore = new Text("0", 14, MainEngine.mTypeface);
+		mPlayerScore = new AtlasText("0", 14, MainEngine.mTypeface);
 		mPlayerScore.x = 64 + 16;
 		mPlayerScore.y = 8;
 		
-		mEnemyScore = new Text("0", 14, MainEngine.mTypeface);
+		mEnemyScore = new AtlasText("0", 14, MainEngine.mTypeface);
 		mEnemyScore.x = FP.screen.getWidth() - (64 + 16 + mEnemyScore.getWidth());
 		mEnemyScore.y = 8;
 		

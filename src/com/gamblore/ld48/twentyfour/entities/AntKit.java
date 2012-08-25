@@ -7,6 +7,7 @@ import java.util.Set;
 import net.androidpunk.Entity;
 import net.androidpunk.FP;
 import net.androidpunk.graphics.Text;
+import net.androidpunk.graphics.atlas.AtlasText;
 import net.androidpunk.graphics.atlas.GraphicList;
 import net.androidpunk.graphics.atlas.SpriteMap;
 import net.androidpunk.graphics.opengl.SubTexture;
@@ -26,7 +27,7 @@ public class AntKit extends Entity {
 	private SubTexture mAntSubTexture;
 	
 	private SpriteMap[] mGraphics = new SpriteMap[4];
-	private Text[] mTexts = new Text[4];
+	private AtlasText[] mTexts = new AtlasText[4];
 	
 	private GraphicList mGraphicsList = new GraphicList();
 	
@@ -54,7 +55,7 @@ public class AntKit extends Entity {
 		map.scale = 2;
 		mGraphics[mKit.size()-1] = map;
 		
-		Text text = new Text(String.valueOf(number), 18, MainEngine.mTypeface);
+		AtlasText text = new AtlasText(String.valueOf(number), 18, MainEngine.mTypeface);
 		text.x = (mKit.size()-1) * (58 * 2) + 16;
 		text.y = FP.screen.getHeight() - (32 * 2) + 8;
 		if (number == 0) {
