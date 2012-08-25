@@ -41,6 +41,25 @@ public class AntKit extends Entity {
 		
 	}
 	
+	public static AntKit getRandomAntKit() {
+		int level = FP.rand(3);
+		int sum = 25;
+		AntKit ak = new AntKit();
+		for (int i = 0; i < 4; i++) {
+			AntGroup ag = new AntGroup();
+			for (int j = 0; j < level; j++) {
+				ag.evolve(FP.rand(4));
+			}
+			int num = FP.rand(5) + 5;
+			if (num > sum) {
+				num = sum;
+			}
+			sum -= num;
+			ak.add(ag, num);
+		}
+		return ak;
+	}
+	
 	public AntKit add(AntGroup group, int number) {
 		if (mKit.size() == 4) {
 			Log.e(TAG, "The AntKit is full.");

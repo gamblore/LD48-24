@@ -1,4 +1,4 @@
-package com.gamblore.ld48.twentyfour;
+package com.gamblore.ld48.twentyfour.worlds;
 
 import java.util.NoSuchElementException;
 import java.util.Vector;
@@ -15,6 +15,7 @@ import net.androidpunk.utils.Input;
 import android.graphics.Point;
 import android.util.Log;
 
+import com.gamblore.ld48.twentyfour.MainEngine;
 import com.gamblore.ld48.twentyfour.entities.Ant;
 import com.gamblore.ld48.twentyfour.entities.AntGroup;
 import com.gamblore.ld48.twentyfour.entities.AntKit;
@@ -54,11 +55,11 @@ public class FightWorld extends World {
 		
 		mPlayerScoreValue = mEnemyScoreValue = 0;
 		
-		mPlayer = (player != null) ? player : createRandomAntKit(25, 3);
+		mPlayer = (player != null) ? player : AntKit.getRandomAntKit();
 		mPlayer.setLayer(0);
 		add(mPlayer);
 		
-		mEnemy = (enemy != null) ? enemy : createRandomAntKit(25, 1);
+		mEnemy = (enemy != null) ? enemy : AntKit.getRandomAntKit();
 		
 		for (int i = 0; i < 5; i++) {
 			mPlayerQueue.add(mPlayer.getRandomAnt());
@@ -97,6 +98,7 @@ public class FightWorld extends World {
 		mEnemyScore.y = 8;
 		
 		Entity text = new Entity();
+		text.setLayer(0);
 		text.setGraphic(new GraphicList(mPlayerText, mEnemyText, mPlayerDamageText, mEnemyDamageText, mPlayerScore, mEnemyScore));
 		
 		mPlayerTextTween = new ColorTween(null, PERSIST);
@@ -111,24 +113,6 @@ public class FightWorld extends World {
 		
 		add(mPlayerQueue.firstElement());
 		add(mEnemyQueue.firstElement());
-	}
-	
-	private AntKit createRandomAntKit(int size, int level) {
-		int sum = size;
-		AntKit p = new AntKit();
-		for (int i = 0; i < 4; i++) {
-			AntGroup ag = new AntGroup();
-			for (int j = 0; j < level; j++) {
-				ag.evolve(FP.rand(4));
-			}
-			int num = FP.rand(5) + 5;
-			if (num > sum) {
-				num = sum;
-			}
-			sum -= num;
-			p.add(ag, num);
-		}
-		return p;
 	}
 	
 	private void buildUI() {
@@ -261,6 +245,7 @@ public class FightWorld extends World {
 		if (mEnemyQueue.size() == 0) {
 			mWin = true;
 			//TODO play victory sound.
+			FP.setWorld(new WinMenu(mPlayerScoreValue, mEnemyScoreValue));
 		} else if (!mEnemyQueue.firstElement().isAlive()) {
 			remove(mEnemyQueue.remove(0));
 			mPlayerScoreValue++;
@@ -323,7 +308,7 @@ public class FightWorld extends World {
 			a.x = FP.screen.getWidth()/2;
 			a.y = (int)(FP.screen.getHeight()/2 - FP.dip(32));
 		} catch (NoSuchElementException e) {
-			FP.setWorld(new FightWorld());
+			//FP.setWorld(new FightWorld());
 			return;
 		}
 		
@@ -334,7 +319,7 @@ public class FightWorld extends World {
 			b.x = FP.screen.getWidth()/2;
 			b.y = (int)(FP.screen.getHeight()/2);
 		} catch (NoSuchElementException e) {
-			FP.setWorld(new FightWorld());
+			//FP.setWorld(new FightWorld());
 			return;
 		}
 		checkAndEvaluateFight(a, b);

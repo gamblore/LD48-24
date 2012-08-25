@@ -12,6 +12,13 @@ public class AntGroup {
 	public static final int UPGRADE_HIDE_FOOD = 2; 
 	public static final int UPGRADE_OUT_OF_REACH_FOOD = 3; 
 	public static final int UPGRADE_POOR_ACID = 4; 
+	
+	/**
+	 * Used to determine how many survive the evolution.
+	 * How many are pulled into battle.
+	 */
+	private int mColonyStrength;
+	
 	// All values are [0-100]
 	// Determines damage
 	private int mAttack;
@@ -29,13 +36,19 @@ public class AntGroup {
 	
 	public AntGroup() {
 		mAttack = mAccuracy = mDefence = mSpeed = 25;
+		mColonyStrength = 100;
 	}
 	
-	public void set(int attack, int defence, int speed, int accuracy) {
+	public void set(int attack, int defence, int speed, int accuracy, int colonyStrength) {
 		mAttack = attack;
 		mDefence = defence;
 		mSpeed = speed;
 		mAccuracy = accuracy;
+		mColonyStrength = colonyStrength;
+	}
+	
+	public int getColonyStrength() {
+		return mColonyStrength;
 	}
 	
 	public int getAntColor() {
@@ -109,6 +122,6 @@ public class AntGroup {
 	}
 	
 	public String toString() {
-		return String.format("%d-%d-%d-%d", mAttack, mDefence, mSpeed, mAccuracy);
+		return String.format("%d-%d-%d-%d-%d", mAttack, mDefence, mSpeed, mAccuracy, mColonyStrength);
 	}
 }

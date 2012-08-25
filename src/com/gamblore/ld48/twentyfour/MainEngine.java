@@ -2,9 +2,11 @@ package com.gamblore.ld48.twentyfour;
 
 import net.androidpunk.Engine;
 import net.androidpunk.FP;
-import net.androidpunk.graphics.Text;
 import net.androidpunk.graphics.opengl.Atlas;
+import net.androidpunk.graphics.opengl.TextAtlas;
 import android.graphics.Typeface;
+
+import com.gamblore.ld48.twentyfour.worlds.MainMenu;
 
 public class MainEngine extends Engine {
 	
@@ -13,14 +15,18 @@ public class MainEngine extends Engine {
 	
 	public static Atlas mAtlas;
 	
+	public static Player PLAYER;
+	
 	public MainEngine(int width, int height, float frameRate, boolean fixed) {
 		super(width, height, frameRate, fixed);
 		
-		mAtlas = new Atlas("textures/atlas.xml");
-		mTypeface = Text.getFontFromRes(R.raw.font_fixed_bold);
+		PLAYER = new Player();
 		
-		//FP.setWorld(new MenuWorld());
-		FP.setWorld(new FightWorld());
+		mAtlas = new Atlas("textures/atlas.xml");
+		mTypeface = TextAtlas.getFontFromRes(R.raw.font_fixed_bold);
+		
+		//FP.setWorld(new WinMenu(25, 19));
+		FP.setWorld(new MainMenu());
 		
 		//TODO load sounds
 		//Log.d(TAG, "Loading sounds");
