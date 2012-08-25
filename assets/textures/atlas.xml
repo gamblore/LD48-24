@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with TexturePacker http://texturepacker.com-->
-<!-- $TexturePacker:SmartUpdate:794a5dc1a64abe87ebe6317f0a31bdcd$ -->
+<!-- $TexturePacker:SmartUpdate:c84dfa591e5362bb1242d12617a01812$ -->
 <TextureAtlas imagePath="atlas.png">
     <SubTexture name="ant" x="2" y="2" width="32" height="32"/>
+    <SubTexture name="background" x="2" y="408" width="240" height="400"/>
     <SubTexture name="enemyqueuebox" x="2" y="72" width="36" height="167"/>
     <SubTexture name="playerqueuebox" x="40" y="72" width="36" height="334"/>
     <SubTexture name="playerselect" x="2" y="36" width="230" height="34"/>

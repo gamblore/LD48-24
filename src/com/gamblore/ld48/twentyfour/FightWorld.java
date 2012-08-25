@@ -10,6 +10,9 @@ import net.androidpunk.graphics.Text;
 import net.androidpunk.graphics.atlas.GraphicList;
 import net.androidpunk.graphics.atlas.Image;
 import net.androidpunk.tweens.misc.ColorTween;
+import net.androidpunk.utils.Input;
+import android.graphics.Point;
+import android.util.Log;
 
 import com.gamblore.ld48.twentyfour.entities.Ant;
 import com.gamblore.ld48.twentyfour.entities.AntGroup;
@@ -19,8 +22,6 @@ public class FightWorld extends World {
 	
 	private static final String TAG = "FightWorld";
 	
-	private AntGroup mA, mB;
-	
 	private Vector<Ant> mPlayerQueue = new Vector<Ant>(10);
 	private Vector<Ant> mEnemyQueue = new Vector<Ant>(10);
 	
@@ -28,6 +29,9 @@ public class FightWorld extends World {
 	
 	private Text mPlayerText, mEnemyText;
 	private Text mPlayerDamageText, mEnemyDamageText;
+	
+	private Text mPlayerScore, mEnemyScore;
+	private int mPlayerScoreValue, mEnemyScoreValue;
 	
 	private ColorTween mPlayerTextTween, mEnemyTextTween;
 	
@@ -47,7 +51,12 @@ public class FightWorld extends World {
 		buildUI();
 		mStep = 0;
 		
+		mPlayerScoreValue = mEnemyScoreValue = 0;
+		
 		mPlayer = (player != null) ? player : createRandomAntKit(25, 3);
+		mPlayer.setLayer(0);
+		add(mPlayer);
+		
 		mEnemy = (enemy != null) ? enemy : createRandomAntKit(25, 1);
 		
 		for (int i = 0; i < 5; i++) {
@@ -78,8 +87,16 @@ public class FightWorld extends World {
 		mEnemyDamageText.setColor(0xffff3333);
 		mEnemyDamageText.visible = false;
 		
+		mPlayerScore = new Text("0", 14, MainEngine.mTypeface);
+		mPlayerScore.x = 64 + 16;
+		mPlayerScore.y = 8;
+		
+		mEnemyScore = new Text("0", 14, MainEngine.mTypeface);
+		mEnemyScore.x = FP.screen.getWidth() - (64 + 16 + mEnemyScore.getWidth());
+		mEnemyScore.y = 8;
+		
 		Entity text = new Entity();
-		text.setGraphic(new GraphicList(mPlayerText, mEnemyText, mPlayerDamageText, mEnemyDamageText));
+		text.setGraphic(new GraphicList(mPlayerText, mEnemyText, mPlayerDamageText, mEnemyDamageText, mPlayerScore, mEnemyScore));
 		
 		mPlayerTextTween = new ColorTween(null, PERSIST);
 		mEnemyTextTween = new ColorTween(null, PERSIST);
@@ -107,6 +124,7 @@ public class FightWorld extends World {
 			if (num > sum) {
 				num = sum;
 			}
+			sum -= num;
 			p.add(ag, num);
 		}
 		return p;
@@ -114,6 +132,11 @@ public class FightWorld extends World {
 	
 	private void buildUI() {
 		mUIGraphics = new Entity();
+		
+		Image background = new Image(MainEngine.mAtlas.getSubTexture("background"));
+		background.scale = 2;
+		background.setColor(0xff888888);
+		
 		Image playerQueue = new Image(MainEngine.mAtlas.getSubTexture("playerqueuebox"));
 		playerQueue.scale = 2;
 		playerQueue.x = playerQueue.y = FP.dip(4);
@@ -129,8 +152,8 @@ public class FightWorld extends World {
 		playerSelect.y = FP.screen.getHeight() - playerSelect.getHeight() * 2 - FP.dip(4);
 		
 		
-		mUIGraphics.setLayer(0);
-		mUIGraphics.setGraphic(new GraphicList(playerQueue, enemyQueue, playerSelect));
+		mUIGraphics.setLayer(10);
+		mUIGraphics.setGraphic(new GraphicList(background, playerQueue, enemyQueue, playerSelect));
 		
 		add(mUIGraphics);
 	}
@@ -221,6 +244,11 @@ public class FightWorld extends World {
 		
 		if (!mPlayerQueue.firstElement().isAlive()) {
 			remove(mPlayerQueue.remove(0));
+			mEnemyScoreValue++;
+			mEnemyScore.setText(String.valueOf(mEnemyScoreValue));
+			if (mEnemyScoreValue > 9) {
+				mEnemyScore.x = FP.screen.getWidth() - (64 + 16 + mEnemyScore.getWidth());
+			}
 			
 			try {
 				mPlayerText.setText(mPlayerQueue.firstElement().getLifeString());
@@ -234,8 +262,14 @@ public class FightWorld extends World {
 			//TODO play victory sound.
 		} else if (!mEnemyQueue.firstElement().isAlive()) {
 			remove(mEnemyQueue.remove(0));
+			mPlayerScoreValue++;
+			mPlayerScore.setText(String.valueOf(mPlayerScoreValue));
 			//add(mEnemyQueue.firstElement());
-			mEnemyText.setText(mEnemyQueue.firstElement().getLifeString());
+			try {
+				mEnemyText.setText(mEnemyQueue.firstElement().getLifeString());
+			} catch (NoSuchElementException e) {
+				mEnemyText.setText("dead");
+			}
 		}
 		
 		fillAnts();
@@ -243,6 +277,24 @@ public class FightWorld extends World {
 		positionAnts();
 	}
 
+	private void checkInput() {
+		if (Input.mousePressed) {
+			Point p = Input.getTouches()[0];
+			Log.d(TAG, String.format("Touch at %d, %d",p.x, p.y));
+			if (mPlayer.collidePoint(0, 0, p.x, p.y)) {
+				if (mPlayerQueue.size() < 11) {
+					int type = (int)((p.x - 8) / (57 * 2));
+					Log.d(TAG, "Touch! " + type);
+					Ant a = mPlayer.getAntFromAntGroup(type);
+					if (a != null) {
+						mPlayerQueue.add(a);
+						add(a);
+					}
+				}
+			}
+		}
+	}
+	
 	@Override
 	public void update() {
 		super.update();
@@ -261,6 +313,8 @@ public class FightWorld extends World {
 		
 		mStep++;
 		
+		checkInput();
+		
 		Ant a, b;
 		try {
 			a = mPlayerQueue.firstElement();
@@ -271,12 +325,17 @@ public class FightWorld extends World {
 			FP.setWorld(new FightWorld());
 			return;
 		}
-		b = mEnemyQueue.firstElement();
-		b.visible = true;
-		b.setFlipped(true);
-		b.x = FP.screen.getWidth()/2;
-		b.y = (int)(FP.screen.getHeight()/2);
 		
+		try {
+			b = mEnemyQueue.firstElement();
+			b.visible = true;
+			b.setFlipped(true);
+			b.x = FP.screen.getWidth()/2;
+			b.y = (int)(FP.screen.getHeight()/2);
+		} catch (NoSuchElementException e) {
+			FP.setWorld(new FightWorld());
+			return;
+		}
 		checkAndEvaluateFight(a, b);
 		
 		updateQueues();

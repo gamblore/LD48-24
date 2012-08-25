@@ -16,6 +16,6 @@ public class MainActivity extends PunkActivity {
         //FP.fixed = true;
         //FP.assignedFrameRate = 30;
         
-        FP.debug = true;
+        //FP.debug = true;
 	}
 }
