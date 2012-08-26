@@ -4,7 +4,9 @@ import java.util.Vector;
 
 import net.androidpunk.Entity;
 import net.androidpunk.FP;
+import net.androidpunk.Sfx;
 import net.androidpunk.World;
+import net.androidpunk.android.PunkActivity.OnBackCallback;
 import net.androidpunk.flashcompat.OnCompleteCallback;
 import net.androidpunk.graphics.atlas.AtlasGraphic;
 import net.androidpunk.graphics.atlas.AtlasText;
@@ -39,10 +41,22 @@ public class EvolveMenu extends World {
 	
 	private Vector<Integer> mColorTransforms = new Vector<Integer>();
 	
+	private boolean mEvolving = false;
+	
+	public final OnBackCallback IN_GAME_BACK_CALLBACK = new OnBackCallback() {
+		
+		@Override
+		public boolean onBack() {
+			if (!mEvolving) {
+				FP.setWorld(new MainMenu());
+			}
+			return true;
+		}
+	};
+	
 	public EvolveMenu(AntGroup group) {
 		
-		//TODO set this to go back to MainMenu?
-		FP.activity.setOnBackCallback(MainEngine.IN_GAME_BACK_CALLBACK);
+		FP.activity.setOnBackCallback(IN_GAME_BACK_CALLBACK);
 		
 		mAntGroup = group;
 		
@@ -52,7 +66,7 @@ public class EvolveMenu extends World {
 		background.scale = 2;
 		
 		mCostText = new AtlasText(String.format(COST_TEXT_FORMAT, 0), 14, MainEngine.mTypeface);
-		mCostText.x = 16 * 2 + 4;
+		mCostText.x = 16 * 2 + 8;
 		mCostText.y = 304 * 2 + 4;
 		
 		mFundsText = new AtlasText(String.format("$%d", MainEngine.PLAYER.getFunds()), 14, MainEngine.mTypeface);
@@ -66,6 +80,8 @@ public class EvolveMenu extends World {
 		
 		e.setGraphic(new GraphicList(background, mCostText, mFundsText, mEvolvingText));
 		e.setLayer(10);
+		
+		add(e);
 		
 		Entity mBackEntity = new Entity(16*2, 336*2);
 		mBackEntity.setHitbox(96 * 2, 48 * 2);
@@ -81,6 +97,7 @@ public class EvolveMenu extends World {
 		mEvolveText = new AtlasText("Evolve", 24, MainEngine.mTypeface);
 		mEvolveText.x = mEvolveEntity.width/2 - mEvolveText.getWidth()/2;
 		mEvolveText.y = 16 * 2;
+		mEvolveText.setColor(0xff666666);
 		mEvolveEntity.setGraphic(mEvolveText);
 		mEvolveEntity.setType("evolve");
 		add(mEvolveEntity);
@@ -101,8 +118,6 @@ public class EvolveMenu extends World {
 		
 		add(mAnt);
 		
-		add(e);
-		
 		mColorTween = new ColorTween(null, PERSIST);
 		addTween(mColorTween);
 	}
@@ -121,8 +136,10 @@ public class EvolveMenu extends World {
 			}
 			if ((e = collidePoint("back", p.x, p.y)) != null) {
 				FP.setWorld(new MainMenu());
+				MainEngine.SFXS.get(MainEngine.SFX_BUBBLE).play(0);
 			} else if ((e = collidePoint("evolve", p.x, p.y)) != null) {
 				if (mCost > 0 && mCost <= MainEngine.PLAYER.getFunds()) {
+					MainEngine.SFXS.get(MainEngine.SFX_BUBBLE).loop();
 					Log.d(TAG, "EVOLVING!");
 					mEvolvingText.visible = true;
 					Vector<Entity> potions = new Vector<Entity>();
@@ -134,11 +151,30 @@ public class EvolveMenu extends World {
 							mFundsText.setText(String.format("$%d", MainEngine.PLAYER.getFunds()));
 							
 							mColorTransforms.add(mAntGroup.getAntColor());
-							mAntGroup.evolve(potion.getPotionType());
-							mColorTransforms.add(mAntGroup.getAntColor());
+							boolean tooktoevolution = mAntGroup.evolve(potion.getPotionType());
+							if (!tooktoevolution) {
+								mColorTransforms.remove(0);
+								((AtlasGraphic)mAnt.getGraphic()).setColor(mAntGroup.getAntColor());
+								mEvolvingText.setText("Extinction");
+								mEvolvingText.x = FP.screen.getWidth()/2 - mEvolvingText.getWidth()/2;
+								mAnt.kill();
+								mColorTween = new ColorTween(new OnCompleteCallback() {
+									
+									@Override
+									public void completed() {
+										FP.setWorld(new MainMenu());
+										MainEngine.SFXS.get(MainEngine.SFX_BUBBLE).play(0);
+									}
+								}, ONESHOT);
+								addTween(mColorTween);
+								mColorTween.tween(2.0f, 0xffff3333, 0x22ff3333);
+							} else {
+								mColorTransforms.add(mAntGroup.getAntColor());
+							}
 						}
 					}
-					//MainEngine.PLAYER.save();
+					mEvolving = true;
+					MainEngine.PLAYER.save();
 				}
 			}
 		}
@@ -152,6 +188,7 @@ public class EvolveMenu extends World {
 					@Override
 					public void completed() {
 						FP.setWorld(new MainMenu());
+						MainEngine.SFXS.get(MainEngine.SFX_BUBBLE).play(0);
 					}
 				}, ONESHOT);
 				
@@ -178,7 +215,10 @@ public class EvolveMenu extends World {
 		}
 		
 		mCost = price;
-		if (mCost == 0 || mCost > MainEngine.PLAYER.getFunds()) {
+		if (mCost == 0) {
+			mCostText.setColor(0xffffffff);
+			mEvolveText.setColor(0xff666666);
+		} else if (mCost > MainEngine.PLAYER.getFunds()) {
 			mCostText.setColor(0xffdd3333);
 			mEvolveText.setColor(0xff666666);
 		} else {
@@ -187,6 +227,5 @@ public class EvolveMenu extends World {
 		}
 		mCostText.setText(String.format(COST_TEXT_FORMAT, price));
 	}
-	
 	
 }

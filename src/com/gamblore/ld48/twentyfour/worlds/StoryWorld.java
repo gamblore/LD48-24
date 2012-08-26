@@ -2,8 +2,6 @@ package com.gamblore.ld48.twentyfour.worlds;
 
 import java.util.Vector;
 
-import com.gamblore.ld48.twentyfour.MainEngine;
-
 import net.androidpunk.Entity;
 import net.androidpunk.FP;
 import net.androidpunk.World;
@@ -14,11 +12,15 @@ import net.androidpunk.tweens.misc.ColorTween;
 import net.androidpunk.utils.Input;
 import android.util.Log;
 
+import com.gamblore.ld48.twentyfour.MainEngine;
+import com.gamblore.ld48.twentyfour.R;
+
 public class StoryWorld extends World {
 
 	private static final String TAG = "StoryWorld";
 	
 	private final float TIME_PER_LINE = 1.0f; 
+	private int mStoryStringResourceId;
 	private String mStoryString;
 	
 	private String mSections[];
@@ -35,6 +37,7 @@ public class StoryWorld extends World {
 		
 		FP.activity.setOnBackCallback(MainEngine.IN_GAME_BACK_CALLBACK);
 		
+		mStoryStringResourceId = stringResourceId;
 		mStoryString = FP.context.getString(stringResourceId);
 		
 		mSections = mStoryString.split("\\n");
@@ -79,10 +82,15 @@ public class StoryWorld extends World {
 				Log.d(TAG, "Displaying " + mCurrentLine + " " + mSections[mCurrentLine]);
 			}
 			if (mCurrentLine == mGraphics.size()) {
-				FP.setWorld(new MainMenu());
+				if (mStoryStringResourceId == R.string.end_story) {
+					FP.setWorld(new MainTitle());
+				} else {
+					FP.setWorld(new MainMenu());
+					MainEngine.PLAYER.firstRun = false;
+				}
 				return;
 			} else if (mCurrentLine == mGraphics.size()-1) {
-				mTimeUntilUpdate = 2.0f;
+				mTimeUntilUpdate = 3.0f;
 			} else {
 				mTimeUntilUpdate = TIME_PER_LINE;
 			}

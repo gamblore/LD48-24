@@ -3,4 +3,6 @@
     <string name="return_to_menu_title">Back?</string>
     <string name="return_to_menu_message">Return to the title screen?</string>
     <string name="intro_story">In the year 2012,\nnerds became bored\nwith violence\nin video games.\n\nThe most hard core\nof gamers looked for\nsomething new.\n\nDeep within the bowels\nof a medical reserach\nlab, a new violent\nsport was born.\n\nANT\nFIGHT\nCLUB.</string>
+    <string name="end_story">Congratulations!\nYou are now the\nbest ant scientist\naround.\n\nA game by Gamblore\n\nEngine\u0020\u0020AndroidPunk\nArt\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020aseprite\n\nThanks for playing!\n\nANT\nFIGHT\nCLUB.</string>
+    
 </resources>

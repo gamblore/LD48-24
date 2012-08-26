@@ -1,17 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with TexturePacker http://texturepacker.com-->
-<!-- $TexturePacker:SmartUpdate:c7f4db995ab57275d7ebb94fd321c460$ -->
+<!-- $TexturePacker:SmartUpdate:eae39b3a5a5359debd33e35fed16aa6c$ -->
 <TextureAtlas imagePath="atlas.png">
-    <SubTexture name="ant" x="778" y="2" width="32" height="32"/>
-    <SubTexture name="background" x="2" y="438" width="240" height="400"/>
-    <SubTexture name="blue_potion" x="196" y="2" width="192" height="32"/>
-    <SubTexture name="enemyqueuebox" x="234" y="36" width="36" height="167"/>
-    <SubTexture name="evolvemenu" x="244" y="438" width="240" height="400"/>
-    <SubTexture name="green_potion" x="2" y="2" width="192" height="32"/>
-    <SubTexture name="mainmenu" x="310" y="36" width="240" height="400"/>
-    <SubTexture name="playerqueuebox" x="272" y="36" width="36" height="334"/>
+    <SubTexture name="ant" x="778" y="2" width="160" height="32"/>
+    <SubTexture name="background" x="486" y="438" width="240" height="400"/>
+    <SubTexture name="blue_potion" x="390" y="2" width="192" height="32"/>
+    <SubTexture name="challengemenu" x="752" y="36" width="240" height="400"/>
+    <SubTexture name="enemyqueuebox" x="434" y="36" width="36" height="167"/>
+    <SubTexture name="evolvemenu" x="510" y="36" width="240" height="400"/>
+    <SubTexture name="green_potion" x="584" y="2" width="192" height="32"/>
+    <SubTexture name="mainmenu" x="2" y="438" width="240" height="400"/>
+    <SubTexture name="playerqueuebox" x="472" y="36" width="36" height="334"/>
     <SubTexture name="playerselect" x="2" y="36" width="230" height="34"/>
-    <SubTexture name="red_potion" x="584" y="2" width="192" height="32"/>
-    <SubTexture name="titlescreen" x="552" y="36" width="240" height="400"/>
-    <SubTexture name="yellow_potion" x="390" y="2" width="192" height="32"/>
+    <SubTexture name="red_potion" x="196" y="2" width="192" height="32"/>
+    <SubTexture name="scientist_backdrop" x="284" y="36" width="48" height="48"/>
+    <SubTexture name="scientist_card" x="334" y="36" width="48" height="48"/>
+    <SubTexture name="scientist_face" x="234" y="36" width="48" height="48"/>
+    <SubTexture name="scientist_hair" x="384" y="36" width="48" height="48"/>
+    <SubTexture name="titlescreen" x="244" y="438" width="240" height="400"/>
+    <SubTexture name="yellow_potion" x="2" y="2" width="192" height="32"/>
 </TextureAtlas>

@@ -24,6 +24,8 @@ public class FightWorld extends World {
 	
 	private static final String TAG = "FightWorld";
 	
+	private static final int ATTACK_SPEED = 75;
+	
 	private Vector<Ant> mPlayerQueue = new Vector<Ant>(10);
 	private Vector<Ant> mEnemyQueue = new Vector<Ant>(10);
 	
@@ -156,10 +158,10 @@ public class FightWorld extends World {
 		int damageA = 0, damageB = 0;
 		
 		boolean aAttacks = false, bAttacks = false;
-		if (mStep % (int)(100f / a.getAntGroup().getAttackRate()) == 0) {
+		if (mStep % (int)((float)ATTACK_SPEED / a.getAntGroup().getAttackRate()) == 0) {
 			aAttacks = true;
 		}
-		if (mStep % (int)(100f / b.getAntGroup().getAttackRate()) == 0) {
+		if (mStep % (int)((float)ATTACK_SPEED / b.getAntGroup().getAttackRate()) == 0) {
 			bAttacks = true;
 		}
 		
@@ -261,7 +263,8 @@ public class FightWorld extends World {
 		
 		if (!mPlayerQueue.firstElement().isAlive()) {
 			mFighting = false;
-			remove(mPlayerQueue.remove(0));
+			mPlayerQueue.remove(0);
+			
 			if (!mPlayerQueue.isEmpty()) {
 				mPlayerQueue.firstElement().tweenTo(ANT_FIGHT_LOCATIONS[0].x,  ANT_FIGHT_LOCATIONS[0].y, new OnCompleteCallback() {
 					
@@ -288,7 +291,7 @@ public class FightWorld extends World {
 			//TODO play victory sound.
 		} else if (!mEnemyQueue.firstElement().isAlive()) {
 			mFighting = false;
-			remove(mEnemyQueue.remove(0));
+			mEnemyQueue.remove(0);
 			if (!mEnemyQueue.isEmpty()) {
 				mEnemyQueue.firstElement().tweenTo(ANT_FIGHT_LOCATIONS[1].x,  ANT_FIGHT_LOCATIONS[1].y, new OnCompleteCallback() {
 					

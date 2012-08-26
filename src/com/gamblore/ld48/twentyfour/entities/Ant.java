@@ -1,11 +1,13 @@
 package com.gamblore.ld48.twentyfour.entities;
 
 import net.androidpunk.Entity;
+import net.androidpunk.FP;
 import net.androidpunk.flashcompat.OnCompleteCallback;
 import net.androidpunk.graphics.atlas.SpriteMap;
 import net.androidpunk.graphics.opengl.SubTexture;
 import net.androidpunk.tweens.misc.ColorTween;
 import net.androidpunk.tweens.motion.LinearPath;
+import net.androidpunk.utils.Ease;
 
 import com.gamblore.ld48.twentyfour.MainEngine;
 
@@ -23,14 +25,28 @@ public class Ant extends Entity {
 	
 	private ColorTween mColorTween;
 	
+	private static final String ANIM_WALK = "walk";
+	private static final String ANIM_DIE = "die";
+	
+	// For showing colony strength.
+	private boolean mVibrate = false;
+	private boolean mTookStep = false;
+	private int mStepX, mStepY;
+	private float mTimeBetweenMoves;
+	private float mTimeUntilMove;
+	
 	public Ant(AntGroup group, int maxLife) {
 		mGroup = group;
 		mLife = mLifeMax = maxLife;
 		
 		SubTexture ant = MainEngine.mAtlas.getSubTexture("ant");
-		mMap = new SpriteMap(ant, ant.getWidth(), ant.getHeight());
+		mMap = new SpriteMap(ant, ant.getWidth()/5, ant.getHeight());
 		mMap.setColor(mGroup.getAntColor());
 		
+		mMap.add(ANIM_WALK, FP.frames(0, 1), 15);
+		mMap.add(ANIM_DIE, FP.frames(2, 5), 10, false);
+		
+		mMap.play(ANIM_WALK);
 		mMap.scale = 2;
 		
 		setGraphic(mMap);
@@ -42,6 +58,13 @@ public class Ant extends Entity {
 		return mGroup;
 	}
 	
+	public void vibrate() {
+		mVibrate = true;
+		// Healthy move at 0.05f speed unhealthy move at 0.4f
+		mTimeBetweenMoves = -0.35f * (getAntGroup().getColonyStrength()/ 100f) + 0.4f;
+		mTimeUntilMove = -1;
+	}
+	
 	public boolean isAlive() {
 		return mLife > 0;
 	}
@@ -50,18 +73,44 @@ public class Ant extends Entity {
 		return String.format("(%d/%d)", mLife, mLifeMax);
 	}
 	
+	public void showCrit() {
+		if (mColorTween == null) {
+			mColorTween = new ColorTween(null, PERSIST);
+			addTween(mColorTween);
+		}
+		mColorTween.tween(0.5f, 0xffff2222, getAntGroup().getAntColor(), Ease.quadOut);
+	}
+	
 	public void damage(int damage) {
+		damage(damage, false);
+	}
+	
+	public void damage(int damage, boolean removeIfKilled) {
 		mLife -= damage;
-		if (mLife < 0) {
+		if (mLife <= 0) {
 			mLife = 0;
 			
-			// TODO play death.
-			
-			mColorTween = new ColorTween(null, ONESHOT);
+			kill();
+			if (removeIfKilled) {
+				final Ant thisAnt = this;
+				mColorTween = new ColorTween(new OnCompleteCallback() {
+					
+					@Override
+					public void completed() {
+						FP.getWorld().remove(thisAnt);
+					}
+				}, ONESHOT);
+			} else {
+				mColorTween = new ColorTween(null, ONESHOT);
+			}
 			addTween(mColorTween);
 			int color = getAntGroup().getAntColor();
 			mColorTween.tween(1.0f, color, color & 0x00ffffff);
 		}
+	}
+	
+	public void kill() {
+		mMap.play(ANIM_DIE, true);
 	}
 	
 	public String toString() {
@@ -98,6 +147,27 @@ public class Ant extends Entity {
 		
 		if (mColorTween != null && mColorTween.active) {
 			mMap.setColor(mColorTween.color);
+		}
+		
+		if (mVibrate) {
+			mTimeUntilMove -= FP.elapsed;
+			if (mTimeUntilMove < 0) {
+				if (mTookStep) {
+					x -= mStepX;
+					y -= mStepY;
+					mTookStep = false;
+				} else {
+					int movementMax = (int)(10 * (getAntGroup().getColonyStrength() / 100f));
+					mStepX = FP.rand(movementMax) - movementMax/2;
+					mStepY = FP.rand(movementMax) - movementMax/2;
+					
+					x += mStepX;
+					y += mStepY;
+					
+					mTookStep = true;
+				}
+				mTimeUntilMove = mTimeBetweenMoves;
+			}
 		}
 	}
 	

@@ -1,5 +1,7 @@
 package com.gamblore.ld48.twentyfour.entities;
 
+import com.gamblore.ld48.twentyfour.MainEngine;
+
 import net.androidpunk.FP;
 import android.graphics.Color;
 import android.util.Log;
@@ -59,11 +61,16 @@ public class AntGroup {
 		//return Color.WHITE;
 	}
 	
+	public void increaseColonyStrength(int strength) {
+		mColonyStrength += strength;
+		mColonyStrength = Math.min(100, mColonyStrength);
+	}
+	
 	/**
 	 * Evolves the ant group.
 	 * @param upgrade
 	 */
-	public void evolve(int upgrade) {
+	public boolean evolve(int upgrade) {
 		Log.d(TAG, "Evolv from " + toString());
 		switch (upgrade) {
 		case UPGRADE_HARDEN_FOOD:
@@ -94,6 +101,12 @@ public class AntGroup {
 		
 		mColonyStrength -= (FP.rand(50) + 25);
 		Log.d(TAG, "Evolved to " + toString());
+		if (mColonyStrength < 0) {
+			mAttack = mDefence = mSpeed = mAccuracy = 25;
+			mColonyStrength = 100;
+			return false;
+		}
+		return true;
 	}
 	
 	public Ant getAnt() {
@@ -117,9 +130,13 @@ public class AntGroup {
 		int damage = FP.rand(attack.getAntGroup().mAttack/3) + attack.getAntGroup().mAttack/3;
 		if (crit) {
 			damage *= 2;
+			attack.showCrit();
+			MainEngine.SFXS.get(MainEngine.SFX_ATTACK_CRIT).play();
+		} else {
+			MainEngine.SFXS.get(MainEngine.SFX_ATTACK).play();
 		}
 		
-		defender.damage(damage);
+		defender.damage(damage, true);
 		Log.d(TAG, attack.toString() + " hit " + defender.toString() + " for " + damage);
 		
 		return damage;

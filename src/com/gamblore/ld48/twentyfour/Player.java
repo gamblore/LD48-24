@@ -1,5 +1,6 @@
 package com.gamblore.ld48.twentyfour;
 
+import net.androidpunk.FP;
 import net.androidpunk.utils.Data;
 import android.util.Log;
 
@@ -13,9 +14,13 @@ public class Player {
 	
 	public boolean firstRun = false;
 	
+	public int challengingIndex = -1; 
+	
 	private AntGroup[] mAntGroups = new AntGroup[4];
 	
-	private int mFunds = 0;
+	private int mFunds = 100;
+	
+	private int mBeaten = 0;
 	
 	public Player() {
 		load();
@@ -50,8 +55,31 @@ public class Player {
 		return mFunds;
 	}
 	
+	public void addFunds(int funds) {
+		mFunds += funds;
+	}
+	
 	public void useFunds(int funds) {
 		mFunds -= funds;
+	}
+	
+	public boolean hasBeaten(int index) {
+		return (mBeaten & (1 << index)) > 0;
+	}
+	
+	public void setBeaten(int index) {
+		mBeaten |= (1 << index);
+		Log.d(TAG, "Beaten index: " + index + " value " + (1 << index)+ " result: " + mBeaten);
+	}
+	
+	public boolean hasWonGame() {
+		return mBeaten == 0xff;
+	}
+	
+	public void increaseColonyStrength() {
+		for (int i = 0; i < mAntGroups.length; i++) {
+			mAntGroups[i].increaseColonyStrength(FP.rand(25) + 35);
+		}
 	}
 	
 	public void save() {
@@ -62,42 +90,55 @@ public class Player {
 		
 		data += "!";
 		data += mFunds + "!";
-		// TODO save other data
+		data += mBeaten + "!";
 		
+		Log.d(TAG, "PLAYER DATA: " + data);
 		Data.getData().edit().putString(PREF_SAVEGAME, data).commit();
 	}
 	
 	public void load() {
 		String data = Data.getData().getString(PREF_SAVEGAME, "");
+		Log.d(TAG, "PLAYER DATA: " + data);
 		if ("".equals(data)) {
-			for (int i = 0; i < 4; i++) {
-				mAntGroups[i] = new AntGroup();
-			}
-			
-			mFunds = 100;
-			firstRun = true;
+			reset();
 		} else {
 			String parts[] = data.split("!");
+			for(int i = 0; i < parts.length; i++) {
+				Log.d(TAG, "Part "+ i + ": " + parts[i]);
+			}
 			
 			// Part 0: Ant Group data
-			String groups[] = parts[0].split("|");
-			if (groups.length < 4) {
+			String groups[] = parts[0].split("\\|");
+			for (int i = 0; i < groups.length; i++) {
+				Log.d(TAG, "group "+i+": " +groups[i]);
+			}
+			if (groups.length != 4) {
 				// Corrupt savegame?
 				Log.e(TAG, "BAD SAVEGAME!");
 				reset();
+				load();
 				return;
 			}
 			for (int i = 0; i < 4; i++) {
+				Log.d(TAG, "Loading antgroup: " + groups[i] );
+				String stats[] = groups[i].split("-");
 				mAntGroups[i] = new AntGroup();
-				mAntGroups[i].set(Integer.parseInt(groups[0]), Integer.parseInt(groups[1]),
-						Integer.parseInt(groups[2]), Integer.parseInt(groups[3]), Integer.parseInt(groups[4]));
+				mAntGroups[i].set(Integer.parseInt(stats[0]), Integer.parseInt(stats[1]),
+						Integer.parseInt(stats[2]), Integer.parseInt(stats[3]), Integer.parseInt(stats[4]));
 			}
 			
 			mFunds = Integer.parseInt(parts[1]);
+			mBeaten = Integer.parseInt(parts[2]);
 		}
 	}
 	
 	public void reset() {
+		for (int i = 0; i < 4; i++) {
+			mAntGroups[i] = new AntGroup();
+		}
+		mFunds = 100;
+		mBeaten = 0;
+		firstRun = true;
 		Data.getData().edit().remove(PREF_SAVEGAME).commit();
 	}
 }

@@ -76,6 +76,7 @@ public class MainMenu extends World {
 			
 			a.setHitbox(a.getWidth(), a.getHeight());
 			a.setType("ant");
+			a.vibrate();
 			
 			add(a);
 		}
@@ -95,7 +96,7 @@ public class MainMenu extends World {
 			}
 			if ((e = collidePoint("challenge", p.x, p.y)) != null) {
 				Log.d(TAG, "Touched Challenge");
-				FP.setWorld(new FightWorld(MainEngine.PLAYER.getAntKit(), null));
+				FP.setWorld(new ChallengeMenu());
 			}
 		}
 	}

@@ -67,7 +67,7 @@ public class AntKit extends Entity {
 		}
 		mKit.put(group, number);
 		
-		SpriteMap map = new SpriteMap(mAntSubTexture, mAntSubTexture.getWidth(), mAntSubTexture.getHeight());
+		SpriteMap map = new SpriteMap(mAntSubTexture, mAntSubTexture.getWidth()/5, mAntSubTexture.getHeight());
 		map.setColor(group.getAntColor());
 		map.x = (mKit.size()-1) * (58 * 2) + 40;
 		map.y = FP.screen.getHeight() - (32 * 2);

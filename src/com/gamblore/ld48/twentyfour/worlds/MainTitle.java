@@ -52,6 +52,7 @@ public class MainTitle extends World {
 		e.setGraphic(new GraphicList(background, mStartText));
 		
 		add(e);
+		
 	}
 
 	@Override
@@ -60,9 +61,11 @@ public class MainTitle extends World {
 		if (Input.mousePressed) {
 			if (MainEngine.PLAYER.firstRun) {
 				FP.setWorld(new StoryWorld(R.string.intro_story));
+				
 			} else {
-				FP.setWorld(new FightWorld(MainEngine.PLAYER.getAntKit(), AntKit.getRandomAntKit()));
+				FP.setWorld(new MainMenu());
 			}
+			MainEngine.SFXS.get(MainEngine.SFX_VICTORY).play();
 		}
 		
 		mStartText.setColor(mStartTween.color);
