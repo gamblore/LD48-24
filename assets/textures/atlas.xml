@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with TexturePacker http://texturepacker.com-->
-<!-- $TexturePacker:SmartUpdate:66e08e416ea735f51b8ba83ae602d3fe$ -->
+<!-- $TexturePacker:SmartUpdate:c8d653a78b2412f6dca4737aca5cee74$ -->
 <TextureAtlas imagePath="atlas.png">
     <SubTexture name="ant" x="2" y="2" width="32" height="32"/>
-    <SubTexture name="background" x="2" y="338" width="240" height="400"/>
-    <SubTexture name="enemyqueuebox" x="268" y="2" width="36" height="167"/>
-    <SubTexture name="playerqueuebox" x="306" y="2" width="36" height="334"/>
-    <SubTexture name="playerselect" x="36" y="2" width="230" height="34"/>
-    <SubTexture name="titlescreen" x="244" y="338" width="240" height="400"/>
+    <SubTexture name="background" x="2" y="408" width="240" height="400"/>
+    <SubTexture name="enemyqueuebox" x="2" y="72" width="36" height="167"/>
+    <SubTexture name="mainmenu" x="2" y="1212" width="240" height="400"/>
+    <SubTexture name="playerqueuebox" x="40" y="72" width="36" height="334"/>
+    <SubTexture name="playerselect" x="2" y="36" width="230" height="34"/>
+    <SubTexture name="titlescreen" x="2" y="810" width="240" height="400"/>
 </TextureAtlas>

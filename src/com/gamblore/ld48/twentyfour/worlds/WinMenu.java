@@ -24,7 +24,7 @@ public class WinMenu extends World {
 		playerScore.y = FP.screen.getHeight()/4;
 		
 		AtlasText enemyScore = new AtlasText("Them\n  "+String.valueOf(scoreEnemy), 24, MainEngine.mTypeface);
-		enemyScore.x = 2*FP.screen.getWidth()/3 - enemyScore.getWidth()/2;
+		enemyScore.x = 2*FP.screen.getWidth()/3;
 		enemyScore.y = FP.screen.getHeight()/4;
 		
 		AtlasText result = new AtlasText(scorePlayer > scoreEnemy ? "YOU WON" : "YOU LOST", 42, MainEngine.mTypeface);
@@ -41,7 +41,7 @@ public class WinMenu extends World {
 		super.update();
 		
 		if(Input.mousePressed) {
-			FP.setWorld(new MainMenu());
+			FP.setWorld(new MainTitle());
 		}
 	}
 	

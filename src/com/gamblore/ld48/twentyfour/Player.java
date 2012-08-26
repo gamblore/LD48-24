@@ -11,10 +11,16 @@ public class Player {
 
 	private static final String PREF_SAVEGAME = "savegame";
 	
+	public boolean firstRun = false;
+	
 	private AntGroup[] mAntGroups = new AntGroup[4];
 	
 	public Player() {
 		load();
+	}
+	
+	public AntGroup[] getAntGroups() {
+		return mAntGroups;
 	}
 	
 	public AntKit getAntKit() {
@@ -56,6 +62,7 @@ public class Player {
 			for (int i = 0; i < 4; i++) {
 				mAntGroups[i] = new AntGroup();
 			}
+			firstRun = true;
 		} else {
 			String parts[] = data.split("!");
 			

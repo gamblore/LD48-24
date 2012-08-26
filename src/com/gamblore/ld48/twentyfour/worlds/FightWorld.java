@@ -6,7 +6,7 @@ import java.util.Vector;
 import net.androidpunk.Entity;
 import net.androidpunk.FP;
 import net.androidpunk.World;
-import net.androidpunk.graphics.Text;
+import net.androidpunk.flashcompat.OnCompleteCallback;
 import net.androidpunk.graphics.atlas.AtlasText;
 import net.androidpunk.graphics.atlas.GraphicList;
 import net.androidpunk.graphics.atlas.Image;
@@ -41,7 +41,9 @@ public class FightWorld extends World {
 	
 	private AntKit mPlayer, mEnemy;
 	
-	private boolean mWin = false;
+	private static final Point[] ANT_FIGHT_LOCATIONS = new Point[] { new Point(), new Point() };  
+	
+	private boolean mFighting = true;
 	
 	public FightWorld() {
 		this(null, null);
@@ -68,24 +70,26 @@ public class FightWorld extends World {
 			add(mEnemyQueue.get(i));
 		}
 		
+		ANT_FIGHT_LOCATIONS[0].set(FP.screen.getWidth()/2 - 64 - 16 + 16, FP.screen.getHeight()/2);
+		ANT_FIGHT_LOCATIONS[1].set(FP.screen.getWidth()/2 + 16 + 16, FP.screen.getHeight()/2);
 		
-		mPlayerText = new AtlasText("Player", 18, MainEngine.mTypeface);
-		mPlayerText.x = FP.screen.getWidth()/2;
-		mPlayerText.y = FP.screen.getHeight()/2 - FP.dip(64);
+		mPlayerText = new AtlasText("(30/30)", 18, MainEngine.mTypeface);
+		mPlayerText.x = ANT_FIGHT_LOCATIONS[0].x + 64 - mPlayerText.getWidth();
+		mPlayerText.y = ANT_FIGHT_LOCATIONS[0].y + 32 * 2;
 		
 		mPlayerDamageText = new AtlasText("", 18, MainEngine.mTypeface);
-		mPlayerDamageText.x = FP.screen.getWidth()/2 + FP.dip(40);
-		mPlayerDamageText.y = FP.screen.getHeight()/2 - FP.dip(30);
+		mPlayerDamageText.x = ANT_FIGHT_LOCATIONS[0].x;
+		mPlayerDamageText.y = ANT_FIGHT_LOCATIONS[0].y;
 		mPlayerDamageText.setColor(0xffff3333);
 		mPlayerDamageText.visible = false;
 		
-		mEnemyText = new AtlasText("Enemy", 18, MainEngine.mTypeface);
-		mEnemyText.x = FP.screen.getWidth()/2;
-		mEnemyText.y = FP.screen.getHeight()/2 + FP.dip(32);
+		mEnemyText = new AtlasText("(31/31)", 18, MainEngine.mTypeface);
+		mEnemyText.x = ANT_FIGHT_LOCATIONS[1].x;
+		mEnemyText.y = ANT_FIGHT_LOCATIONS[1].y + 32 * 2;
 		
 		mEnemyDamageText = new AtlasText("", 18, MainEngine.mTypeface);
-		mEnemyDamageText.x = FP.screen.getWidth()/2 + FP.dip(40);
-		mEnemyDamageText.y = FP.screen.getHeight()/2 + FP.dip(10);
+		mEnemyDamageText.x = ANT_FIGHT_LOCATIONS[1].x;
+		mEnemyDamageText.y = ANT_FIGHT_LOCATIONS[1].y;
 		mEnemyDamageText.setColor(0xffff3333);
 		mEnemyDamageText.visible = false;
 		
@@ -113,6 +117,9 @@ public class FightWorld extends World {
 		
 		add(mPlayerQueue.firstElement());
 		add(mEnemyQueue.firstElement());
+		
+		positionAnts();
+		tweenAnts();
 	}
 	
 	private void buildUI() {
@@ -175,6 +182,7 @@ public class FightWorld extends World {
 		if (damageA > 0) {
 			mPlayerDamageText.visible = true;
 			mPlayerDamageText.setText(String.valueOf(damageA));
+			mPlayerDamageText.x = ANT_FIGHT_LOCATIONS[0].x + 64 - mPlayerDamageText.getWidth();
 			mPlayerTextTween.tween(0.5f, 0xffff3333, 0x00ff3333);
 			mPlayerText.setText(a.getLifeString());
 			
@@ -193,6 +201,8 @@ public class FightWorld extends World {
 			if (b == null) {
 				break;
 			}
+			b.x = FP.screen.getWidth();
+			b.y = FP.screen.getHeight()/2;
 			mEnemyQueue.add(b);
 			add(b);
 		}
@@ -202,8 +212,28 @@ public class FightWorld extends World {
 			if (a == null) {
 				break;
 			}
+			a.x = -64;
+			a.y = FP.screen.getHeight()/2;
 			mPlayerQueue.add(a);
 			add(a);
+		}
+		
+		//tweenAnts();
+	}
+	
+	private void tweenAnts() {
+		for(int i = 1; i < mPlayerQueue.size(); i++) {
+			Ant a = mPlayerQueue.get(i);
+			a.tweenTo(4 + 8, 4 + 8 + ((i-1) * (33 * 2) + 2), null);
+			a.visible = true;
+		}
+		
+		int enemyX = FP.screen.getWidth() - 10 - 32 * 2;
+		for(int i = 1; i < mEnemyQueue.size() && i < 6; i++) {
+			Ant e = mEnemyQueue.get(i);
+			e.tweenTo(enemyX, 4 + 8 + ((i-1) * (33 * 2) + 2), null);
+			e.setFlipped(true);
+			e.visible = true;
 		}
 	}
 	
@@ -215,7 +245,7 @@ public class FightWorld extends World {
 			a.visible = true;
 		}
 		
-		int enemyX = FP.screen.getWidth() - 8 - 32 * 2;
+		int enemyX = FP.screen.getWidth() - 10 - 32 * 2;
 		for(int i = 1; i < mEnemyQueue.size() && i < 6; i++) {
 			Ant e = mEnemyQueue.get(i);
 			e.x = enemyX;
@@ -228,7 +258,17 @@ public class FightWorld extends World {
 	private void updateQueues() {
 		
 		if (!mPlayerQueue.firstElement().isAlive()) {
+			mFighting = false;
 			remove(mPlayerQueue.remove(0));
+			if (!mPlayerQueue.isEmpty()) {
+				mPlayerQueue.firstElement().tweenTo(ANT_FIGHT_LOCATIONS[0].x,  ANT_FIGHT_LOCATIONS[0].y, new OnCompleteCallback() {
+					
+					@Override
+					public void completed() {
+						mFighting = true;
+					}
+				});
+			}
 			mEnemyScoreValue++;
 			mEnemyScore.setText(String.valueOf(mEnemyScoreValue));
 			if (mEnemyScoreValue > 9) {
@@ -243,11 +283,19 @@ public class FightWorld extends World {
 		}
 		
 		if (mEnemyQueue.size() == 0) {
-			mWin = true;
 			//TODO play victory sound.
-			FP.setWorld(new WinMenu(mPlayerScoreValue, mEnemyScoreValue));
 		} else if (!mEnemyQueue.firstElement().isAlive()) {
+			mFighting = false;
 			remove(mEnemyQueue.remove(0));
+			if (!mEnemyQueue.isEmpty()) {
+				mEnemyQueue.firstElement().tweenTo(ANT_FIGHT_LOCATIONS[1].x,  ANT_FIGHT_LOCATIONS[1].y, new OnCompleteCallback() {
+					
+					@Override
+					public void completed() {
+						mFighting = true;
+					}
+				});
+			}
 			mPlayerScoreValue++;
 			mPlayerScore.setText(String.valueOf(mPlayerScoreValue));
 			//add(mEnemyQueue.firstElement());
@@ -260,7 +308,7 @@ public class FightWorld extends World {
 		
 		fillAnts();
 		
-		positionAnts();
+		tweenAnts();
 	}
 
 	private void checkInput() {
@@ -273,8 +321,11 @@ public class FightWorld extends World {
 					Log.d(TAG, "Touch! " + type);
 					Ant a = mPlayer.getAntFromAntGroup(type);
 					if (a != null) {
+						a.x = -64;
+						a.y = 4 + 8 + ((mPlayerQueue.size()) * (33 * 2) + 2);
 						mPlayerQueue.add(a);
 						add(a);
+						tweenAnts();
 					}
 				}
 			}
@@ -284,6 +335,10 @@ public class FightWorld extends World {
 	@Override
 	public void update() {
 		super.update();
+		
+		if (mPlayerQueue.isEmpty() || mEnemyQueue.isEmpty()) {
+			FP.setWorld(new WinMenu(mPlayerScoreValue, mEnemyScoreValue));
+		}
 		
 		if (mPlayerTextTween.active) {
 			mPlayerDamageText.setColor(mPlayerTextTween.color);
@@ -297,29 +352,34 @@ public class FightWorld extends World {
 			mEnemyDamageText.visible = false;
 		}
 		
-		mStep++;
-		
 		checkInput();
+		
+		if (!mFighting) {
+			return;
+		}
+		mStep++;
 		
 		Ant a, b;
 		try {
 			a = mPlayerQueue.firstElement();
-			a.visible = true;
-			a.x = FP.screen.getWidth()/2;
-			a.y = (int)(FP.screen.getHeight()/2 - FP.dip(32));
+			if (!a.visible) {
+				a.visible = true;
+				a.x = ANT_FIGHT_LOCATIONS[0].x;
+				a.y = ANT_FIGHT_LOCATIONS[0].y;
+			}
 		} catch (NoSuchElementException e) {
-			//FP.setWorld(new FightWorld());
 			return;
 		}
 		
 		try {
 			b = mEnemyQueue.firstElement();
-			b.visible = true;
+			if (!b.visible) {
+				b.visible = true;
+				b.x = ANT_FIGHT_LOCATIONS[1].x;
+				b.y = ANT_FIGHT_LOCATIONS[1].y;
+			}
 			b.setFlipped(true);
-			b.x = FP.screen.getWidth()/2;
-			b.y = (int)(FP.screen.getHeight()/2);
 		} catch (NoSuchElementException e) {
-			//FP.setWorld(new FightWorld());
 			return;
 		}
 		checkAndEvaluateFight(a, b);

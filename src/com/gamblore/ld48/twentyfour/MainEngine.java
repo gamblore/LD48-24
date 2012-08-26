@@ -7,6 +7,8 @@ import net.androidpunk.graphics.opengl.TextAtlas;
 import android.graphics.Typeface;
 
 import com.gamblore.ld48.twentyfour.worlds.MainMenu;
+import com.gamblore.ld48.twentyfour.worlds.MainTitle;
+import com.gamblore.ld48.twentyfour.worlds.StoryWorld;
 
 public class MainEngine extends Engine {
 	
@@ -26,7 +28,9 @@ public class MainEngine extends Engine {
 		mTypeface = TextAtlas.getFontFromRes(R.raw.font_fixed_bold);
 		
 		//FP.setWorld(new WinMenu(25, 19));
+		//FP.setWorld(new StoryWorld(R.string.intro_story));
 		FP.setWorld(new MainMenu());
+		//FP.setWorld(new MainMenu());
 		
 		//TODO load sounds
 		//Log.d(TAG, "Loading sounds");
