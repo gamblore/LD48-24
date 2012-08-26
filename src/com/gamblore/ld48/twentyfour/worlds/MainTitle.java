@@ -22,6 +22,8 @@ public class MainTitle extends World {
 	public MainTitle() {
 		super();
 		
+		FP.activity.setOnBackCallback(null);
+		
 		Image background = new Image(MainEngine.mAtlas.getSubTexture("titlescreen"));
 		background.scale = 2;
 		

@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with TexturePacker http://texturepacker.com-->
-<!-- $TexturePacker:SmartUpdate:c8d653a78b2412f6dca4737aca5cee74$ -->
+<!-- $TexturePacker:SmartUpdate:c7f4db995ab57275d7ebb94fd321c460$ -->
 <TextureAtlas imagePath="atlas.png">
-    <SubTexture name="ant" x="2" y="2" width="32" height="32"/>
-    <SubTexture name="background" x="2" y="408" width="240" height="400"/>
-    <SubTexture name="enemyqueuebox" x="2" y="72" width="36" height="167"/>
-    <SubTexture name="mainmenu" x="2" y="1212" width="240" height="400"/>
-    <SubTexture name="playerqueuebox" x="40" y="72" width="36" height="334"/>
+    <SubTexture name="ant" x="778" y="2" width="32" height="32"/>
+    <SubTexture name="background" x="2" y="438" width="240" height="400"/>
+    <SubTexture name="blue_potion" x="196" y="2" width="192" height="32"/>
+    <SubTexture name="enemyqueuebox" x="234" y="36" width="36" height="167"/>
+    <SubTexture name="evolvemenu" x="244" y="438" width="240" height="400"/>
+    <SubTexture name="green_potion" x="2" y="2" width="192" height="32"/>
+    <SubTexture name="mainmenu" x="310" y="36" width="240" height="400"/>
+    <SubTexture name="playerqueuebox" x="272" y="36" width="36" height="334"/>
     <SubTexture name="playerselect" x="2" y="36" width="230" height="34"/>
-    <SubTexture name="titlescreen" x="2" y="810" width="240" height="400"/>
+    <SubTexture name="red_potion" x="584" y="2" width="192" height="32"/>
+    <SubTexture name="titlescreen" x="552" y="36" width="240" height="400"/>
+    <SubTexture name="yellow_potion" x="390" y="2" width="192" height="32"/>
 </TextureAtlas>

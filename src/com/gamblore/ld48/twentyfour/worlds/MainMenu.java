@@ -7,6 +7,9 @@ import net.androidpunk.graphics.atlas.AtlasGraphic;
 import net.androidpunk.graphics.atlas.AtlasText;
 import net.androidpunk.graphics.atlas.GraphicList;
 import net.androidpunk.graphics.atlas.Image;
+import net.androidpunk.utils.Input;
+import android.graphics.Point;
+import android.util.Log;
 
 import com.gamblore.ld48.twentyfour.MainEngine;
 import com.gamblore.ld48.twentyfour.entities.Ant;
@@ -14,13 +17,17 @@ import com.gamblore.ld48.twentyfour.entities.AntGroup;
 
 public class MainMenu extends World {
 	
+	private static final String TAG = "MainMenu";
 	
 	private static final int[][] ANT_POSITIONS = new int[][] { new int[] { 48*2, 48*2 }, new int[] { 3 * 48*2, 48*2}, new int[] { 48*2, 3 * 48*2 }, new int[] {3 * 48*2,3 * 48*2 }};
 	
-	private AtlasText mLogText, mFundsText, mChallangeText;
+	private AtlasText mLogText, mFundsText, mChallengeText;
 	
 	public MainMenu() {
 		super();
+		
+		FP.activity.setOnBackCallback(MainEngine.IN_GAME_BACK_CALLBACK);
+		
 		Entity e = new Entity();
 		
 		Image background = new Image(MainEngine.mAtlas.getSubTexture("mainmenu"));
@@ -30,18 +37,25 @@ public class MainMenu extends World {
 		mLogText.x = 18 * 2;
 		mLogText.y = 208 * 2;
 		
-		mFundsText = new AtlasText("$100", 14, MainEngine.mTypeface);
+		mFundsText = new AtlasText(String.format("$%d", MainEngine.PLAYER.getFunds()), 14, MainEngine.mTypeface);
 		mFundsText.x = FP.screen.getWidth()/2 - mFundsText.getWidth()/2;
 		mFundsText.y = 4;
 		
-		mChallangeText = new AtlasText("Challange!", 20, MainEngine.mTypeface);
-		mChallangeText.x = FP.screen.getWidth()/2 - mChallangeText.getWidth()/2;
-		mChallangeText.y = 352 * 2;
+		mChallengeText = new AtlasText("Challange!", 20, MainEngine.mTypeface);
+		mChallengeText.x = FP.screen.getWidth()/2 - mChallengeText.getWidth()/2;
+		mChallengeText.y = 352 * 2;
+		mChallengeText.relative = false;
 		
-		e.setGraphic(new GraphicList(background, mLogText, mFundsText, mChallangeText));
+		e.setGraphic(new GraphicList(background, mLogText, mFundsText));
 		e.setLayer(10);
 		
 		add(e);
+		
+		Entity challangeEntity = new Entity(48*2, 336*2);
+		challangeEntity.setGraphic(mChallengeText);
+		challangeEntity.setHitbox(3 * 48*2, 48*2);
+		challangeEntity.setType("challenge");
+		add(challangeEntity);
 		
 		getDisplayAnts();
 	}
@@ -60,7 +74,31 @@ public class MainMenu extends World {
 			a.x = ANT_POSITIONS[i][0];
 			a.y = ANT_POSITIONS[i][1];
 			
+			a.setHitbox(a.getWidth(), a.getHeight());
+			a.setType("ant");
+			
 			add(a);
 		}
 	}
+
+	@Override
+	public void update() {
+		super.update();
+		
+		if (Input.mousePressed) {
+			Point p = Input.getTouches()[0];
+			Entity e;
+			if ((e = collidePoint("ant", p.x, p.y)) != null) {
+				Ant a = (Ant)e;
+				Log.d(TAG, "Touched " + a.getAntGroup().toString());
+				FP.setWorld(new EvolveMenu(a.getAntGroup()));
+			}
+			if ((e = collidePoint("challenge", p.x, p.y)) != null) {
+				Log.d(TAG, "Touched Challenge");
+				FP.setWorld(new FightWorld(MainEngine.PLAYER.getAntKit(), null));
+			}
+		}
+	}
+	
+	
 }

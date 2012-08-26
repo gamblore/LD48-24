@@ -11,6 +11,7 @@ import net.androidpunk.graphics.atlas.AtlasGraphic;
 import net.androidpunk.graphics.atlas.AtlasText;
 import net.androidpunk.graphics.atlas.GraphicList;
 import net.androidpunk.tweens.misc.ColorTween;
+import net.androidpunk.utils.Input;
 import android.util.Log;
 
 public class StoryWorld extends World {
@@ -31,6 +32,8 @@ public class StoryWorld extends World {
 	
 	public StoryWorld(int stringResourceId) {
 		super();
+		
+		FP.activity.setOnBackCallback(MainEngine.IN_GAME_BACK_CALLBACK);
 		
 		mStoryString = FP.context.getString(stringResourceId);
 		
@@ -63,6 +66,12 @@ public class StoryWorld extends World {
 	public void update() {
 		super.update();
 		mTimeUntilUpdate -= FP.elapsed;
+		
+		if (Input.mousePressed) {
+			if (mCurrentLine != mGraphics.size()-1) {
+				mTimeUntilUpdate = -1;
+			}
+		}
 		
 		if (mTimeUntilUpdate < 0) {
 			mCurrentLine++;

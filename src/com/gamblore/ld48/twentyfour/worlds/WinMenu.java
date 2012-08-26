@@ -17,6 +17,8 @@ public class WinMenu extends World {
 	public WinMenu(int scorePlayer, int scoreEnemy) {
 		super();
 		
+		FP.activity.setOnBackCallback(MainEngine.IN_GAME_BACK_CALLBACK);
+		
 		Entity e = new Entity();
 		
 		AtlasText playerScore = new AtlasText("You\n  "+String.valueOf(scorePlayer), 24, MainEngine.mTypeface);
@@ -41,7 +43,7 @@ public class WinMenu extends World {
 		super.update();
 		
 		if(Input.mousePressed) {
-			FP.setWorld(new MainTitle());
+			FP.setWorld(new MainMenu());
 		}
 	}
 	

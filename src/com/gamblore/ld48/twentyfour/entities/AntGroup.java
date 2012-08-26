@@ -64,32 +64,36 @@ public class AntGroup {
 	 * @param upgrade
 	 */
 	public void evolve(int upgrade) {
+		Log.d(TAG, "Evolv from " + toString());
 		switch (upgrade) {
 		case UPGRADE_HARDEN_FOOD:
-			mAttack += FP.rand(10);
-			mAccuracy -= FP.rand(10);
+			mAttack += FP.rand(10) + 5;
+			mAccuracy -= (FP.rand(10) + 2);
 			break;
 
 		case UPGRADE_HIDE_FOOD:
-			mAccuracy += FP.rand(10);
-			mAttack -= FP.rand(5);
-			mDefence -= FP.rand(5);
+			mAccuracy += FP.rand(10) + 5;
+			mAttack -= (FP.rand(3) - 2);
+			mDefence -= (FP.rand(3) - 2);
 			break;
 			
 		case UPGRADE_OUT_OF_REACH_FOOD:
-			mSpeed += FP.rand(10);
-			mDefence -= FP.rand(5);
-			mAccuracy -= FP.rand(5);
+			mSpeed += FP.rand(10) + 5;
+			mDefence -= (FP.rand(3) - 2);
+			mAccuracy -= (FP.rand(3) - 2);
 			break;
 			
 		case UPGRADE_POOR_ACID:
-			mDefence += FP.rand(15);
-			mSpeed -= FP.rand(5);
+			mDefence += FP.rand(10) + 10;
+			mSpeed -= (FP.rand(3) - 2);
 			break;
 			
 		default:
 			break;
 		}
+		
+		mColonyStrength -= (FP.rand(50) + 25);
+		Log.d(TAG, "Evolved to " + toString());
 	}
 	
 	public Ant getAnt() {

@@ -15,6 +15,8 @@ public class Player {
 	
 	private AntGroup[] mAntGroups = new AntGroup[4];
 	
+	private int mFunds = 0;
+	
 	public Player() {
 		load();
 	}
@@ -44,6 +46,14 @@ public class Player {
 		return ak;
 	}
 	
+	public int getFunds() {
+		return mFunds;
+	}
+	
+	public void useFunds(int funds) {
+		mFunds -= funds;
+	}
+	
 	public void save() {
 		String data = "";
 		for (int i = 0; i < 4; i++) {
@@ -51,6 +61,7 @@ public class Player {
 		}
 		
 		data += "!";
+		data += mFunds + "!";
 		// TODO save other data
 		
 		Data.getData().edit().putString(PREF_SAVEGAME, data).commit();
@@ -62,6 +73,8 @@ public class Player {
 			for (int i = 0; i < 4; i++) {
 				mAntGroups[i] = new AntGroup();
 			}
+			
+			mFunds = 100;
 			firstRun = true;
 		} else {
 			String parts[] = data.split("!");
@@ -79,6 +92,8 @@ public class Player {
 				mAntGroups[i].set(Integer.parseInt(groups[0]), Integer.parseInt(groups[1]),
 						Integer.parseInt(groups[2]), Integer.parseInt(groups[3]), Integer.parseInt(groups[4]));
 			}
+			
+			mFunds = Integer.parseInt(parts[1]);
 		}
 	}
 	

@@ -52,6 +52,8 @@ public class FightWorld extends World {
 	public FightWorld(AntKit player, AntKit enemy) {
 		super();
 		
+		FP.activity.setOnBackCallback(MainEngine.IN_GAME_BACK_CALLBACK);
+		
 		buildUI();
 		mStep = 0;
 		

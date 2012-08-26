@@ -11,6 +11,7 @@ import com.gamblore.ld48.twentyfour.MainEngine;
 
 public class Ant extends Entity {
 
+	public static final String TYPE = "ant";
 	// pulled from defense.
 	private int mLife, mLifeMax;
 	
@@ -34,6 +35,7 @@ public class Ant extends Entity {
 		
 		setGraphic(mMap);
 		setLayer(1);
+		setType(TYPE);
 	}
 	
 	public AntGroup getAntGroup() {
@@ -99,5 +101,12 @@ public class Ant extends Entity {
 		}
 	}
 	
+	public int getWidth() {
+		return (int)Math.abs(mMap.scale * mMap.scaleX * mMap.getWidth());
+	}
+	
+	public int getHeight() {
+		return (int)Math.abs(mMap.scale * mMap.scaleY * mMap.getHeight());
+	}
 	
 }
