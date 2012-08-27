@@ -41,7 +41,7 @@ public class MainMenu extends World {
 		mFundsText.x = FP.screen.getWidth()/2 - mFundsText.getWidth()/2;
 		mFundsText.y = 4;
 		
-		mChallengeText = new AtlasText("Challange!", 20, MainEngine.mTypeface);
+		mChallengeText = new AtlasText("Challenge!", 20, MainEngine.mTypeface);
 		mChallengeText.x = FP.screen.getWidth()/2 - mChallengeText.getWidth()/2;
 		mChallengeText.y = 352 * 2;
 		mChallengeText.relative = false;
@@ -51,11 +51,11 @@ public class MainMenu extends World {
 		
 		add(e);
 		
-		Entity challangeEntity = new Entity(48*2, 336*2);
-		challangeEntity.setGraphic(mChallengeText);
-		challangeEntity.setHitbox(3 * 48*2, 48*2);
-		challangeEntity.setType("challenge");
-		add(challangeEntity);
+		Entity challengeEntity = new Entity(48*2, 336*2);
+		challengeEntity.setGraphic(mChallengeText);
+		challengeEntity.setHitbox(3 * 48*2, 48*2);
+		challengeEntity.setType("challenge");
+		add(challengeEntity);
 		
 		getDisplayAnts();
 	}
