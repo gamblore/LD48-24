@@ -5,7 +5,6 @@ import java.util.Map;
 
 import net.androidpunk.Engine;
 import net.androidpunk.FP;
-import net.androidpunk.R;
 import net.androidpunk.Sfx;
 import net.androidpunk.android.PunkActivity.OnBackCallback;
 import net.androidpunk.graphics.opengl.Atlas;
